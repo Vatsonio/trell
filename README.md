@@ -2,6 +2,18 @@
 
 <b>TREL</b> - A full-stack task management application with drag-and-drop functionality built with React, Node.js, Express, and MongoDB.
 
+## 🚀 Live Demo
+
+**Production URL**: https://trell-6w8myhrwt-vatsonios-projects.vercel.app
+
+## 🌐 Deployment Information
+
+- **Platform**: Vercel
+- **Frontend**: Static build deployed
+- **Backend API**: Serverless functions
+- **Database**: MongoDB Atlas
+- **Auto-deployment**: Connected to GitHub repo
+
 ![Screeen1](https://media.discordapp.net/attachments/1151832689620557876/1382116322317701244/image.png?ex=6849fba1&is=6848aa21&hm=dd258577cb3438763abe7c675ff70a04ab17d7962048f318f2484f7272c532f6&=&format=webp&quality=lossless&width=2381&height=1232)
 
 ![Screeen2](https://media.discordapp.net/attachments/1151832689620557876/1382116334640566372/image.png?ex=6849fba4&is=6848aa24&hm=276515f4eaf8589c4d10b57006efb3472fb086385fb7d91feb102805afd808fc&=&format=webp&quality=lossless&width=2390&height=1232)

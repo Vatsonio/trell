@@ -15,12 +15,17 @@
   ],
   "routes": [
     {
+      "src": "/api/boards/(.*)",
+      "dest": "/api/boards.ts"
+    },
+    {
+      "src": "/api/cards/(.*)",
+      "dest": "/api/cards.ts"
+    },
+    {
       "src": "/(.*)",
       "dest": "/frontend/build/$1"
     }
   ],
-  "env": {
-    "MONGODB_URI": "@mongodb-uri"
-  },
   "outputDirectory": "frontend/build"
 }
