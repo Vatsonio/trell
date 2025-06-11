@@ -1,13 +1,13 @@
 {
   "name": "task-management-board",
   "version": "1.0.0",
-  "description": "Task Management Board with React and Express",
-  "main": "index.js",  "scripts": {
+  "description": "Task Management Board with React and Express",  "main": "index.js",
+  "scripts": {
     "dev": "concurrently \"npm run server\" \"npm run client\"",
     "server": "cd backend && npm run dev",
     "client": "cd frontend && npm start",
-    "build": "echo 'Static files already built'",
-    "vercel-build": "echo 'Static files already in root'",
+    "build": "echo 'Using pre-built files from root'",
+    "vercel-build": "echo 'Using pre-built files from root'",
     "install-deps": "npm install && cd frontend && npm install && cd ../backend && npm install",
     "test-api": "node test-api.js",
     "docker:build": "docker-compose build",
