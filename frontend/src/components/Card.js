@@ -1,16 +1,10 @@
 import React, { useState } from 'react';
 import { useDrag } from 'react-dnd';
 import { useDispatch } from 'react-redux';
-import { AppDispatch } from '../store/store';
 import { updateCard, deleteCard } from '../store/slices/boardSlice';
-import { Card as CardType } from '../types';
 
-interface CardProps {
-  card: CardType;
-}
-
-const Card: React.FC<CardProps> = ({ card }) => {
-  const dispatch = useDispatch<AppDispatch>();
+const Card = ({ card }) => {
+  const dispatch = useDispatch();
   const [isEditing, setIsEditing] = useState(false);
   const [title, setTitle] = useState(card.title);
   const [description, setDescription] = useState(card.description);
@@ -110,7 +104,7 @@ const Card: React.FC<CardProps> = ({ card }) => {
             </div>
           </div>
           {card.description && (
-            <p className="text-gray-600 text-sm whitespace-pre-wrap">{card.description}</p>
+            <p className="text-gray-600 text-sm mt-2">{card.description}</p>
           )}
         </div>
       )}

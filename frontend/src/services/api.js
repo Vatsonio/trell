@@ -1,10 +1,9 @@
 import axios from 'axios';
-import { Board, CreateCardData, UpdateCardData, MoveCardData } from '../types';
 
 // Use Vercel deployment URL in production, localhost in development
 const API_BASE_URL = process.env.NODE_ENV === 'production' 
-  ? '/api'  // This will use the same domain as the frontend
-  : process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+  ? '/api'  // This will use the same domain as the frontend on Vercel
+  : process.env.REACT_APP_API_URL || 'http://localhost:5002/api';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -15,30 +14,30 @@ const api = axios.create({
 
 export const boardApi = {
   // Get board by ID
-  getBoard: async (id: string): Promise<Board> => {
+  getBoard: async (id) => {
     const response = await api.get(`/boards/${id}`);
     return response.data;
   },
 
   // Create new board
-  createBoard: async (name: string): Promise<Board> => {
+  createBoard: async (name) => {
     const response = await api.post('/boards', { name });
     return response.data;
   },
 
   // Update board
-  updateBoard: async (id: string, name: string): Promise<Board> => {
+  updateBoard: async (id, name) => {
     const response = await api.put(`/boards/${id}`, { name });
     return response.data;
   },
 
   // Delete board
-  deleteBoard: async (id: string): Promise<void> => {
+  deleteBoard: async (id) => {
     await api.delete(`/boards/${id}`);
   },
 
   // Add card to board
-  addCard: async (boardId: string, cardData: CreateCardData) => {
+  addCard: async (boardId, cardData) => {
     const response = await api.post(`/boards/${boardId}/cards`, cardData);
     return response.data;
   },
@@ -46,18 +45,18 @@ export const boardApi = {
 
 export const cardApi = {
   // Update card
-  updateCard: async (cardId: string, cardData: UpdateCardData) => {
+  updateCard: async (cardId, cardData) => {
     const response = await api.put(`/cards/${cardId}`, cardData);
     return response.data;
   },
 
   // Delete card
-  deleteCard: async (cardId: string): Promise<void> => {
+  deleteCard: async (cardId) => {
     await api.delete(`/cards/${cardId}`);
   },
 
   // Move card
-  moveCard: async (cardId: string, moveData: MoveCardData) => {
+  moveCard: async (cardId, moveData) => {
     const response = await api.put(`/cards/${cardId}/move`, moveData);
     return response.data;
   },

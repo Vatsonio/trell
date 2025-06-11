@@ -1,16 +1,16 @@
 import React from 'react';
 import { Provider } from 'react-redux';
 import { useSelector, useDispatch } from 'react-redux';
-import { store, RootState, AppDispatch } from './store/store';
+import { store } from './store/store';
 import { fetchBoard } from './store/slices/boardSlice';
 import BoardHeader from './components/BoardHeader';
 import Board from './components/Board';
 
-const AppContent: React.FC = () => {
-  const dispatch = useDispatch<AppDispatch>();
-  const { currentBoard, loading, error } = useSelector((state: RootState) => state.board);
+const AppContent = () => {
+  const dispatch = useDispatch();
+  const { currentBoard, loading, error } = useSelector((state) => state.board);
 
-  const handleLoadBoard = (boardId: string) => {
+  const handleLoadBoard = (boardId) => {
     dispatch(fetchBoard(boardId));
   };
 

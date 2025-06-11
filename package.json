@@ -1,27 +1,36 @@
 {
   "name": "trell-kanban-board",
   "version": "1.0.0",
-  "description": "Task Management Board with React and Express",  "main": "index.js",  "scripts": {
+  "description": "Task Management Board with React and Express",
+  "main": "index.js",
+  "scripts": {
     "dev": "concurrently \"npm run server\" \"npm run client\"",
-    "server": "cd backend; npm run dev",
-    "client": "cd frontend; npm start",
-    "build": "echo 'Using pre-built files from root'",
-    "vercel-build": "echo 'Using pre-built files from root'",
-    "install-deps": "npm install; cd frontend; npm install; cd ../backend; npm install",
+    "dev-memory": "concurrently \"node server-memory.js\" \"npm run client\"",
+    "server": "node server.js",
+    "server-memory": "node server-memory.js",
+    "client": "npm start",
+    "build": "npm run build",
+    "vercel-build": "npm run build",
+    "install-deps": "npm install",
     "test-api": "node test-api.js",
+    "test-memory-api": "node test-memory-api.js",
     "docker:build": "docker-compose build",
     "docker:up": "docker-compose up",
     "docker:down": "docker-compose down"
   },
   "keywords": ["react", "express", "mongodb", "typescript", "kanban"],
   "author": "",
-  "license": "MIT",  "devDependencies": {
-    "concurrently": "^8.2.2"
-  },  "dependencies": {
+  "license": "MIT",
+  "dependencies": {
     "@vercel/node": "^3.0.0",
     "mongoose": "^8.0.0",
     "express": "^4.18.2",
     "cors": "^2.8.5",
     "axios": "^1.6.2"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0"
   }
 }

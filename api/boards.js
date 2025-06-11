@@ -1,7 +1,6 @@
-import type { VercelRequest, VercelResponse } from '@vercel/node';
-import mongoose from 'mongoose';
+const mongoose = require('mongoose');
 
-// Define schemas inline to avoid import issues
+// Define schemas inline
 const CardSchema = new mongoose.Schema({
   title: { type: String, required: true },
   description: { type: String, default: '' },
@@ -27,7 +26,7 @@ const BoardSchema = new mongoose.Schema({
 const Board = mongoose.models.Board || mongoose.model('Board', BoardSchema);
 
 // Generate board ID function
-function generateBoardId(): string {
+function generateBoardId() {
   const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
   let result = '';
   for (let i = 0; i < 8; i++) {
@@ -36,50 +35,39 @@ function generateBoardId(): string {
   return result;
 }
 
-// MongoDB connection - Improved for serverless
-let cached = global.mongoose;
+// MongoDB connection
+let isConnected = false;
 
-if (!cached) {
-  cached = global.mongoose = { conn: null, promise: null };
-}
-
-async function connectDB() {
-  if (cached.conn) {
-    return cached.conn;
+const connectDB = async () => {
+  if (isConnected && mongoose.connection.readyState === 1) {
+    return;
   }
 
-  if (!cached.promise) {
-    const mongoUri = process.env.MONGODB_URI;
-    
-    if (!mongoUri) {
-      throw new Error('MONGODB_URI environment variable is not set');
-    }
+  const mongoUri = process.env.MONGODB_URI;
+  
+  if (!mongoUri) {
+    throw new Error('MONGODB_URI environment variable is not set');
+  }
 
-    const opts = {
+  try {
+    await mongoose.connect(mongoUri, {
       bufferCommands: false,
       maxPoolSize: 1,
       serverSelectionTimeoutMS: 5000,
       socketTimeoutMS: 10000,
       connectTimeoutMS: 10000,
-    };
-
-    cached.promise = mongoose.connect(mongoUri, opts).then((mongoose) => {
-      return mongoose;
     });
+    
+    isConnected = true;
+    console.log('MongoDB connected successfully');
+  } catch (error) {
+    isConnected = false;
+    console.error('MongoDB connection failed:', error);
+    throw error;
   }
+};
 
-  try {
-    cached.conn = await cached.promise;
-  } catch (e) {
-    cached.promise = null;
-    throw e;
-  }
-
-  return cached.conn;
-}
-
-export default async function handler(req: VercelRequest, res: VercelResponse) {
-  // Set CORS headers
+module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
@@ -90,30 +78,31 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   try {
-    console.log('Connecting to MongoDB...');
     await connectDB();
-    console.log('MongoDB connected successfully');
     
     const { method, url } = req;
     const pathParts = url?.split('/').filter(Boolean) || [];
-    console.log(`Processing ${method} request with path:`, pathParts);
     
-    // GET /api/boards - List all boards
+    // Get all boards
     if (method === 'GET' && pathParts.length === 2) {
       const boards = await Board.find({}).sort({ createdAt: -1 });
-      return res.status(200).json(boards);
+      res.status(200).json(boards);
+      return;
     }
     
-    // POST /api/boards - Create new board
+    // Create new board
     if (method === 'POST' && pathParts.length === 2) {
       const { name } = req.body;
       
       if (!name || typeof name !== 'string' || name.trim().length === 0) {
-        return res.status(400).json({ error: 'Board name is required and must be a non-empty string' });
+        res.status(400).json({ error: 'Board name is required and must be a non-empty string' });
+        return;
       }
       
+      const boardId = generateBoardId();
+      
       const boardData = {
-        _id: generateBoardId(),
+        _id: boardId,
         name: name.trim(),
         cards: []
       };
@@ -121,22 +110,25 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       const board = new Board(boardData);
       const savedBoard = await board.save();
       
-      return res.status(201).json(savedBoard);
+      res.status(201).json(savedBoard);
+      return;
     }
     
-    // GET /api/boards/:id - Get specific board
+    // Get specific board
     if (method === 'GET' && pathParts.length === 3) {
       const boardId = pathParts[2];
       const board = await Board.findById(boardId);
       
       if (!board) {
-        return res.status(404).json({ error: 'Board not found' });
+        res.status(404).json({ error: 'Board not found' });
+        return;
       }
       
-      return res.status(200).json(board);
+      res.status(200).json(board);
+      return;
     }
     
-    // PUT /api/boards/:id - Update board
+    // Update board
     if (method === 'PUT' && pathParts.length === 3) {
       const boardId = pathParts[2];
       const { name } = req.body;
@@ -148,46 +140,32 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       );
       
       if (!board) {
-        return res.status(404).json({ error: 'Board not found' });
+        res.status(404).json({ error: 'Board not found' });
+        return;
       }
       
-      return res.status(200).json(board);
+      res.status(200).json(board);
+      return;
     }
     
-    // DELETE /api/boards/:id - Delete board
+    // Delete board
     if (method === 'DELETE' && pathParts.length === 3) {
       const boardId = pathParts[2];
       const board = await Board.findByIdAndDelete(boardId);
       
       if (!board) {
-        return res.status(404).json({ error: 'Board not found' });
+        res.status(404).json({ error: 'Board not found' });
+        return;
       }
       
-      return res.status(200).json({ message: 'Board deleted successfully' });
+      res.status(200).json({ message: 'Board deleted successfully' });
+      return;
     }
     
-    return res.status(404).json({ error: 'Not found' });
+    res.status(404).json({ error: 'Not found' });
     
   } catch (error) {
     console.error('Boards API Error:', error);
-    
-    if (error instanceof Error) {
-      if (error.message.includes('MONGODB_URI')) {
-        return res.status(500).json({ 
-          error: 'Database configuration error',
-          message: 'MongoDB connection not configured properly'
-        });
-      } else if (error.message.includes('timeout') || error.message.includes('ETIMEDOUT')) {
-        return res.status(504).json({ 
-          error: 'Database timeout',
-          message: 'Database connection timed out'
-        });
-      }
-    }
-    
-    return res.status(500).json({ 
-      error: 'Internal server error',
-      message: process.env.NODE_ENV === 'development' ? (error as Error).message : 'An error occurred'
-    });
+    res.status(500).json({ error: 'Internal server error' });
   }
-}
+};

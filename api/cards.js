@@ -1,7 +1,6 @@
-import type { VercelRequest, VercelResponse } from '@vercel/node';
-import mongoose from 'mongoose';
+const mongoose = require('mongoose');
 
-// Define schemas inline to avoid import issues
+// Define schemas inline
 const CardSchema = new mongoose.Schema({
   title: { type: String, required: true },
   description: { type: String, default: '' },
@@ -57,7 +56,7 @@ const connectDB = async () => {
   }
 };
 
-export default async function handler(req: VercelRequest, res: VercelResponse) {
+module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
@@ -73,6 +72,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const { method, url } = req;
     const pathParts = url?.split('/').filter(Boolean) || [];
     
+    // Create card
     if (method === 'POST' && pathParts.length === 2) {
       const { boardId, title, description, column } = req.body;
       
@@ -80,7 +80,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         res.status(400).json({ error: 'Board ID, title, and column are required' });
         return;
       }
-        const board = await (Board as any).findById(boardId);
+      
+      const board = await Board.findById(boardId);
       if (!board) {
         res.status(404).json({ error: 'Board not found' });
         return;
@@ -104,14 +105,16 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return;
     }
     
+    // Update or move card
     if (method === 'PUT' && pathParts.length === 3) {
       const cardId = pathParts[2];
       
-      if (!mongoose.Types.ObjectId.isValid(cardId)) {        res.status(400).json({ error: 'Invalid card ID' });
+      if (!mongoose.Types.ObjectId.isValid(cardId)) {
+        res.status(400).json({ error: 'Invalid card ID' });
         return;
       }
       
-      const board = await (Board as any).findOne({ 'cards._id': cardId });
+      const board = await Board.findOne({ 'cards._id': cardId });
       if (!board) {
         res.status(404).json({ error: 'Card not found' });
         return;
@@ -155,6 +158,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return;
     }
     
+    // Delete card
     if (method === 'DELETE' && pathParts.length === 3) {
       const cardId = pathParts[2];
       
@@ -162,7 +166,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         res.status(400).json({ error: 'Invalid card ID' });
         return;
       }
-        const board = await (Board as any).findOne({ 'cards._id': cardId });
+      
+      const board = await Board.findOne({ 'cards._id': cardId });
       if (!board) {
         res.status(404).json({ error: 'Card not found' });
         return;
@@ -181,4 +186,4 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     console.error('Cards API Error:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
-}
+};

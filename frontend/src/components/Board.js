@@ -1,18 +1,13 @@
 import React from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
-import { Card, Board as BoardType } from '../types';
 import Column from './Column';
 
-interface BoardProps {
-  board: BoardType;
-}
-
-const Board: React.FC<BoardProps> = ({ board }) => {
+const Board = ({ board }) => {
   // Group cards by column
-  const todoCards = board.cards.filter((card: Card) => card.column === 'todo');
-  const inProgressCards = board.cards.filter((card: Card) => card.column === 'inProgress');
-  const doneCards = board.cards.filter((card: Card) => card.column === 'done');
+  const todoCards = board.cards.filter((card) => card.column === 'todo');
+  const inProgressCards = board.cards.filter((card) => card.column === 'inProgress');
+  const doneCards = board.cards.filter((card) => card.column === 'done');
 
   return (
     <DndProvider backend={HTML5Backend}>

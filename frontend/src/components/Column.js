@@ -1,27 +1,18 @@
 import React, { useState } from 'react';
 import { useDrop } from 'react-dnd';
 import { useDispatch } from 'react-redux';
-import { AppDispatch } from '../store/store';
 import { addCard, moveCard } from '../store/slices/boardSlice';
-import { Card as CardType } from '../types';
 import Card from './Card';
 
-interface ColumnProps {
-  title: string;
-  column: 'todo' | 'inProgress' | 'done';
-  cards: CardType[];
-  boardId: string;
-}
-
-const Column: React.FC<ColumnProps> = ({ title, column, cards, boardId }) => {
-  const dispatch = useDispatch<AppDispatch>();
+const Column = ({ title, column, cards, boardId }) => {
+  const dispatch = useDispatch();
   const [isAddingCard, setIsAddingCard] = useState(false);
   const [newCardTitle, setNewCardTitle] = useState('');
   const [newCardDescription, setNewCardDescription] = useState('');
 
   const [{ isOver }, drop] = useDrop({
     accept: 'CARD',
-    drop: (item: { id: string; column: string; order: number }) => {
+    drop: (item) => {
       if (item.column !== column) {
         // Moving to different column
         dispatch(moveCard({

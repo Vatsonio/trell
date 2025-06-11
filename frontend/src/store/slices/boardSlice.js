@@ -1,8 +1,7 @@
-import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import { Board, BoardState, CreateCardData, UpdateCardData, MoveCardData } from '../../types';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { boardApi, cardApi } from '../../services/api';
 
-const initialState: BoardState = {
+const initialState = {
   currentBoard: null,
   loading: false,
   error: null,
@@ -11,7 +10,7 @@ const initialState: BoardState = {
 // Async thunks
 export const fetchBoard = createAsyncThunk(
   'board/fetchBoard',
-  async (boardId: string) => {
+  async (boardId) => {
     const board = await boardApi.getBoard(boardId);
     return board;
   }
@@ -19,7 +18,7 @@ export const fetchBoard = createAsyncThunk(
 
 export const createBoard = createAsyncThunk(
   'board/createBoard',
-  async (name: string) => {
+  async (name) => {
     const board = await boardApi.createBoard(name);
     return board;
   }
@@ -27,7 +26,7 @@ export const createBoard = createAsyncThunk(
 
 export const updateBoard = createAsyncThunk(
   'board/updateBoard',
-  async ({ id, name }: { id: string; name: string }) => {
+  async ({ id, name }) => {
     const board = await boardApi.updateBoard(id, name);
     return board;
   }
@@ -35,7 +34,7 @@ export const updateBoard = createAsyncThunk(
 
 export const deleteBoard = createAsyncThunk(
   'board/deleteBoard',
-  async (boardId: string) => {
+  async (boardId) => {
     await boardApi.deleteBoard(boardId);
     return boardId;
   }
@@ -43,7 +42,7 @@ export const deleteBoard = createAsyncThunk(
 
 export const addCard = createAsyncThunk(
   'board/addCard',
-  async ({ boardId, cardData }: { boardId: string; cardData: CreateCardData }) => {
+  async ({ boardId, cardData }) => {
     const card = await boardApi.addCard(boardId, cardData);
     return card;
   }
@@ -51,7 +50,7 @@ export const addCard = createAsyncThunk(
 
 export const updateCard = createAsyncThunk(
   'board/updateCard',
-  async ({ cardId, cardData }: { cardId: string; cardData: UpdateCardData }) => {
+  async ({ cardId, cardData }) => {
     const card = await cardApi.updateCard(cardId, cardData);
     return card;
   }
@@ -59,7 +58,7 @@ export const updateCard = createAsyncThunk(
 
 export const deleteCard = createAsyncThunk(
   'board/deleteCard',
-  async (cardId: string) => {
+  async (cardId) => {
     await cardApi.deleteCard(cardId);
     return cardId;
   }
@@ -67,7 +66,7 @@ export const deleteCard = createAsyncThunk(
 
 export const moveCard = createAsyncThunk(
   'board/moveCard',
-  async ({ cardId, moveData }: { cardId: string; moveData: MoveCardData }) => {
+  async ({ cardId, moveData }) => {
     const card = await cardApi.moveCard(cardId, moveData);
     return card;
   }
@@ -91,7 +90,7 @@ const boardSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(fetchBoard.fulfilled, (state, action: PayloadAction<Board>) => {
+      .addCase(fetchBoard.fulfilled, (state, action) => {
         state.loading = false;
         state.currentBoard = action.payload;
       })
@@ -104,7 +103,7 @@ const boardSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(createBoard.fulfilled, (state, action: PayloadAction<Board>) => {
+      .addCase(createBoard.fulfilled, (state, action) => {
         state.loading = false;
         state.currentBoard = action.payload;
       })
@@ -113,7 +112,7 @@ const boardSlice = createSlice({
         state.error = action.error.message || 'Failed to create board';
       })
       // Update board
-      .addCase(updateBoard.fulfilled, (state, action: PayloadAction<Board>) => {
+      .addCase(updateBoard.fulfilled, (state, action) => {
         state.currentBoard = action.payload;
       })
       // Delete board
@@ -138,7 +137,7 @@ const boardSlice = createSlice({
         }
       })
       // Delete card
-      .addCase(deleteCard.fulfilled, (state, action: PayloadAction<string>) => {
+      .addCase(deleteCard.fulfilled, (state, action) => {
         if (state.currentBoard) {
           state.currentBoard.cards = state.currentBoard.cards.filter(
             card => card._id !== action.payload
