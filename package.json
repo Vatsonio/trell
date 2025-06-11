@@ -2,12 +2,12 @@
   "name": "task-management-board",
   "version": "1.0.0",
   "description": "Task Management Board with React and Express",
-  "main": "index.js",
-  "scripts": {
+  "main": "index.js",  "scripts": {
     "dev": "concurrently \"npm run server\" \"npm run client\"",
     "server": "cd backend && npm run dev",
     "client": "cd frontend && npm start",
     "build": "cd frontend && npm run build",
+    "vercel-build": "cd frontend && npm install && npm run build",
     "install-deps": "npm install && cd frontend && npm install && cd ../backend && npm install",
     "docker:build": "docker-compose build",
     "docker:up": "docker-compose up",
@@ -15,8 +15,13 @@
   },
   "keywords": ["react", "express", "mongodb", "typescript", "kanban"],
   "author": "",
-  "license": "MIT",
-  "devDependencies": {
+  "license": "MIT",  "devDependencies": {
     "concurrently": "^8.2.2"
+  },
+  "dependencies": {
+    "@vercel/node": "^3.0.0",
+    "mongoose": "^8.0.0",
+    "express": "^4.18.2",
+    "cors": "^2.8.5"
   }
 }
