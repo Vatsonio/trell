@@ -43,9 +43,18 @@ const connectDB = async () => {
   if (isConnected) return;
   
   try {
-    const mongoUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/taskboard';
-    await mongoose.connect(mongoUri);
+    const mongoUri = process.env.MONGODB_URI;
+    
+    if (!mongoUri) {
+      throw new Error('MONGODB_URI environment variable is not set');
+    }
+    
+    await mongoose.connect(mongoUri, {
+      bufferCommands: false,
+      maxPoolSize: 1,
+    });
     isConnected = true;
+    console.log('MongoDB connected successfully');
   } catch (error) {
     console.error('MongoDB connection error:', error);
     throw error;
