@@ -1,13 +1,59 @@
 const https = require('https');
 
 async function testAPI() {
-  const baseURL = 'trell-r8ihdpggv-vatsonios-projects.vercel.app';
+  const baseURL = 'trell-edbnt87sv-vatsonios-projects.vercel.app';
   
   console.log('🧪 Testing Vercel deployment API endpoints...');
   console.log(`📍 Base URL: https://${baseURL}`);
   
-  // Test 1: Create a board
-  console.log('\n1️⃣ Testing board creation...');
+  // Test 1: Test endpoint
+  console.log('\n🔍 Testing test endpoint...');
+  
+  const testOptions = {
+    hostname: baseURL,
+    port: 443,
+    path: '/api/test',
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  };
+
+  const testResult = await new Promise((resolve, reject) => {
+    const req = https.request(testOptions, (res) => {
+      let responseData = '';
+      
+      console.log(`Status: ${res.statusCode}`);
+      
+      res.on('data', (chunk) => {
+        responseData += chunk;
+      });
+      
+      res.on('end', () => {
+        console.log('Response Body:', responseData);
+        
+        if (res.statusCode === 200) {
+          console.log('✅ Test endpoint successful!');
+          resolve(true);
+        } else {
+          console.log(`❌ Test endpoint failed with status ${res.statusCode}`);
+          resolve(false);
+        }
+      });
+    });
+
+    req.on('error', (error) => {
+      console.error('❌ Request error:', error.message);
+      reject(error);
+    });
+
+    req.end();
+  });
+
+  if (!testResult) return;
+
+  // Test 2: Create a board
+  console.log('\n📋 Testing board creation...');
   
   const data = JSON.stringify({ name: 'Test Board from CLI' });
   
@@ -27,7 +73,6 @@ async function testAPI() {
       let responseData = '';
       
       console.log(`Status: ${res.statusCode}`);
-      console.log(`Headers:`, res.headers);
       
       res.on('data', (chunk) => {
         responseData += chunk;

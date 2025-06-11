@@ -1,5 +1,5 @@
 {
-  "name": "task-management-board",
+  "name": "trell-kanban-board",
   "version": "1.0.0",
   "description": "Task Management Board with React and Express",  "main": "index.js",
   "scripts": {
