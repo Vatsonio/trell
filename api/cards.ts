@@ -65,8 +65,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         res.status(400).json({ error: 'Board ID, title, and column are required' });
         return;
       }
-      
-      const board = await Board.findById(boardId);
+        const board = await (Board as any).findById(boardId);
       if (!board) {
         res.status(404).json({ error: 'Board not found' });
         return;
@@ -93,12 +92,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     if (method === 'PUT' && pathParts.length === 3) {
       const cardId = pathParts[2];
       
-      if (!mongoose.Types.ObjectId.isValid(cardId)) {
-        res.status(400).json({ error: 'Invalid card ID' });
+      if (!mongoose.Types.ObjectId.isValid(cardId)) {        res.status(400).json({ error: 'Invalid card ID' });
         return;
       }
       
-      const board = await Board.findOne({ 'cards._id': cardId });
+      const board = await (Board as any).findOne({ 'cards._id': cardId });
       if (!board) {
         res.status(404).json({ error: 'Card not found' });
         return;
@@ -149,8 +147,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         res.status(400).json({ error: 'Invalid card ID' });
         return;
       }
-      
-      const board = await Board.findOne({ 'cards._id': cardId });
+        const board = await (Board as any).findOne({ 'cards._id': cardId });
       if (!board) {
         res.status(404).json({ error: 'Card not found' });
         return;

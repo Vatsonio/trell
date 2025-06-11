@@ -65,11 +65,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
     await connectDB();
     
-    const { method, url } = req;
-    const pathParts = url?.split('/').filter(Boolean) || [];
-    
-    if (method === 'GET' && pathParts.length === 2) {
-      const boards = await Board.find({}).sort({ createdAt: -1 });
+    const { method, url } = req;    const pathParts = url?.split('/').filter(Boolean) || [];
+      if (method === 'GET' && pathParts.length === 2) {
+      const boards = await (Board as any).find({}).sort({ createdAt: -1 });
       res.status(200).json(boards);
       return;
     }
@@ -93,10 +91,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       res.status(201).json(board);
       return;
     }
-    
-    if (method === 'GET' && pathParts.length === 3) {
+      if (method === 'GET' && pathParts.length === 3) {
       const boardId = pathParts[2];
-      const board = await Board.findById(boardId);
+      const board = await (Board as any).findById(boardId);
       
       if (!board) {
         res.status(404).json({ error: 'Board not found' });
@@ -106,12 +103,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       res.status(200).json(board);
       return;
     }
-    
-    if (method === 'PUT' && pathParts.length === 3) {
+      if (method === 'PUT' && pathParts.length === 3) {
       const boardId = pathParts[2];
       const { name } = req.body;
       
-      const board = await Board.findByIdAndUpdate(
+      const board = await (Board as any).findByIdAndUpdate(
         boardId,
         { name },
         { new: true }
@@ -125,10 +121,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       res.status(200).json(board);
       return;
     }
-    
-    if (method === 'DELETE' && pathParts.length === 3) {
+      if (method === 'DELETE' && pathParts.length === 3) {
       const boardId = pathParts[2];
-      const board = await Board.findByIdAndDelete(boardId);
+      const board = await (Board as any).findByIdAndDelete(boardId);
       
       if (!board) {
         res.status(404).json({ error: 'Board not found' });
