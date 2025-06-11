@@ -1,8 +1,12 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const Board_1 = require("../models/Board");
 const generateId_1 = require("../utils/generateId");
+const mongoose_1 = __importDefault(require("mongoose"));
 const router = (0, express_1.Router)();
 // Get board by ID
 router.get('/:id', async (req, res) => {
@@ -85,15 +89,17 @@ router.post('/:id/cards', async (req, res) => {
             ? Math.max(...cardsInColumn.map(card => card.order))
             : -1;
         const newCard = {
+            _id: new mongoose_1.default.Types.ObjectId(),
             title,
             description: description || '',
             column,
             order: maxOrder + 1,
-            _id: (0, generateId_1.generateBoardId)()
         };
         board.cards.push(newCard);
         await board.save();
-        res.status(201).json(newCard);
+        // Get the created card from the saved board
+        const createdCard = board.cards[board.cards.length - 1];
+        res.status(201).json(createdCard);
     }
     catch (error) {
         res.status(500).json({ message: 'Server error', error });

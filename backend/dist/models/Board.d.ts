@@ -1,6 +1,6 @@
 import mongoose, { Document } from 'mongoose';
 export interface ICard {
-    _id?: string;
+    _id?: mongoose.Types.ObjectId;
     title: string;
     description: string;
     column: 'todo' | 'inProgress' | 'done';

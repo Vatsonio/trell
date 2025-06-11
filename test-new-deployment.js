@@ -1,7 +1,7 @@
 const https = require('https');
 
 async function testAPI() {
-  const baseURL = 'trell-kanban-apf1w8tlq-vatsonios-projects.vercel.app';
+  const baseURL = 'trell-kanban-29lxjqcf3-vatsonios-projects.vercel.app';
   
   console.log('🧪 Testing Vercel deployment API endpoints...');
   console.log(`📍 Base URL: https://${baseURL}`);

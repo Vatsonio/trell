@@ -1,14 +1,13 @@
 {
   "name": "trell-kanban-board",
   "version": "1.0.0",
-  "description": "Task Management Board with React and Express",  "main": "index.js",
-  "scripts": {
+  "description": "Task Management Board with React and Express",  "main": "index.js",  "scripts": {
     "dev": "concurrently \"npm run server\" \"npm run client\"",
-    "server": "cd backend && npm run dev",
-    "client": "cd frontend && npm start",
+    "server": "cd backend; npm run dev",
+    "client": "cd frontend; npm start",
     "build": "echo 'Using pre-built files from root'",
     "vercel-build": "echo 'Using pre-built files from root'",
-    "install-deps": "npm install && cd frontend && npm install && cd ../backend && npm install",
+    "install-deps": "npm install; cd frontend; npm install; cd ../backend; npm install",
     "test-api": "node test-api.js",
     "docker:build": "docker-compose build",
     "docker:up": "docker-compose up",

@@ -36,29 +36,26 @@ function generateBoardId(): string {
   return result;
 }
 
-// MongoDB connection
-let isConnected = false;
-
+// MongoDB connection - Simplified for serverless
 const connectDB = async () => {
-  if (isConnected) return;
+  const mongoUri = process.env.MONGODB_URI;
   
-  try {
-    const mongoUri = process.env.MONGODB_URI;
-    
-    if (!mongoUri) {
-      throw new Error('MONGODB_URI environment variable is not set');
-    }
-    
-    await mongoose.connect(mongoUri, {
-      bufferCommands: false,
-      maxPoolSize: 1,
-    });
-    isConnected = true;
-    console.log('MongoDB connected successfully');
-  } catch (error) {
-    console.error('MongoDB connection error:', error);
-    throw error;
+  if (!mongoUri) {
+    throw new Error('MONGODB_URI environment variable is not set');
   }
+
+  console.log('Connecting to MongoDB...');
+  
+  // For serverless, create a fresh connection each time
+  await mongoose.connect(mongoUri, {
+    bufferCommands: false,
+    maxPoolSize: 1,
+    serverSelectionTimeoutMS: 3000,
+    socketTimeoutMS: 5000,
+    connectTimeoutMS: 3000,
+  });
+  
+  console.log('MongoDB connected successfully');
 };
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
@@ -70,37 +67,58 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     res.status(200).end();
     return;
   }
-
   try {
-    await connectDB();
+    console.log('Attempting to connect to MongoDB...');
     
-    const { method, url } = req;    const pathParts = url?.split('/').filter(Boolean) || [];
-      if (method === 'GET' && pathParts.length === 2) {
+    // Add timeout to connection attempt
+    const connectionPromise = connectDB();
+    const timeoutPromise = new Promise((_, reject) => 
+      setTimeout(() => reject(new Error('MongoDB connection timeout')), 8000)
+    );
+    
+    await Promise.race([connectionPromise, timeoutPromise]);
+    console.log('MongoDB connection successful, processing request...');
+    
+    const { method, url } = req;
+    const pathParts = url?.split('/').filter(Boolean) || [];
+    console.log(`Processing ${method} request with path:`, pathParts);
+    
+    if (method === 'GET' && pathParts.length === 2) {
       const boards = await (Board as any).find({}).sort({ createdAt: -1 });
       res.status(200).json(boards);
       return;
     }
     
     if (method === 'POST' && pathParts.length === 2) {
+      console.log('Creating new board...');
       const { name } = req.body;
       
-      if (!name) {
-        res.status(400).json({ error: 'Board name is required' });
+      if (!name || typeof name !== 'string' || name.trim().length === 0) {
+        console.log('Invalid board name provided:', name);
+        res.status(400).json({ error: 'Board name is required and must be a non-empty string' });
         return;
       }
       
       const boardId = generateBoardId();
-      const board = new Board({
-        _id: boardId,
-        name,
-        cards: []
-      });
+      console.log('Generated board ID:', boardId);
       
-      await board.save();
-      res.status(201).json(board);
-      return;
-    }
-      if (method === 'GET' && pathParts.length === 3) {
+      const boardData = {
+        _id: boardId,
+        name: name.trim(),
+        cards: []
+      };
+      
+      console.log('Creating board with data:', boardData);
+      
+      const board = new Board(boardData);
+      
+      const savedBoard = await board.save();
+      console.log('Board saved successfully:', savedBoard._id);
+      
+      res.status(201).json(savedBoard);
+      return;    }
+    
+    if (method === 'GET' && pathParts.length === 3) {
       const boardId = pathParts[2];
       const board = await (Board as any).findById(boardId);
       
@@ -110,9 +128,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       }
       
       res.status(200).json(board);
-      return;
-    }
-      if (method === 'PUT' && pathParts.length === 3) {
+      return;    }
+    
+    if (method === 'PUT' && pathParts.length === 3) {
       const boardId = pathParts[2];
       const { name } = req.body;
       
@@ -128,9 +146,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       }
       
       res.status(200).json(board);
-      return;
-    }
-      if (method === 'DELETE' && pathParts.length === 3) {
+      return;    }
+    
+    if (method === 'DELETE' && pathParts.length === 3) {
       const boardId = pathParts[2];
       const board = await (Board as any).findByIdAndDelete(boardId);
       

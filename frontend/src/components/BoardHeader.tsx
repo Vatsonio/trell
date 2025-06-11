@@ -55,8 +55,11 @@ const BoardHeader: React.FC<BoardHeaderProps> = ({ board, onLoadBoard }) => {
             placeholder="Enter a board ID here..."
             value={boardId}
             onChange={(e) => setBoardId(e.target.value)}
-            className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-            onKeyPress={(e) => e.key === 'Enter' && handleLoadBoard()}
+            className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"                      onKeyPress={(e) => {
+                        if (e.key === 'Enter') {
+                          handleLoadBoard();
+                        }
+                      }}
           />
           <button
             onClick={handleLoadBoard}
@@ -79,7 +82,11 @@ const BoardHeader: React.FC<BoardHeaderProps> = ({ board, onLoadBoard }) => {
                       onChange={(e) => setBoardName(e.target.value)}
                       placeholder="Board name"
                       className="px-3 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary"
-                      onKeyPress={(e) => e.key === 'Enter' && handleUpdateBoard()}
+                      onKeyPress={(e) => {
+                        if (e.key === 'Enter') {
+                          handleUpdateBoard();
+                        }
+                      }}
                       autoFocus
                     />
                     <button
@@ -140,7 +147,11 @@ const BoardHeader: React.FC<BoardHeaderProps> = ({ board, onLoadBoard }) => {
                       onChange={(e) => setBoardName(e.target.value)}
                       placeholder="Enter board name"
                       className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-                      onKeyPress={(e) => e.key === 'Enter' && handleCreateBoard()}
+                      onKeyPress={(e) => {
+                        if (e.key === 'Enter') {
+                          handleCreateBoard();
+                        }
+                      }}
                       autoFocus
                     />
                     <button

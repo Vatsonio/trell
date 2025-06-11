@@ -2,7 +2,7 @@
 const axios = require('axios');
 
 // Base URL - change this to your Vercel deployment URL when testing production
-const BASE_URL = process.env.API_URL || 'http://localhost:5000/api';
+const BASE_URL = process.env.API_URL || 'http://localhost:5001/api';
 
 async function testAPI() {
   console.log('🧪 Testing API endpoints...');
@@ -22,11 +22,9 @@ async function testAPI() {
     console.log('\n2️⃣ Testing board retrieval...');
     const getBoardResponse = await axios.get(`${BASE_URL}/boards/${boardId}`);
     console.log('✅ Board retrieved:', { id: getBoardResponse.data._id, name: getBoardResponse.data.name });
-    
-    // Test 3: Create a card
+      // Test 3: Create a card
     console.log('\n3️⃣ Testing card creation...');
-    const createCardResponse = await axios.post(`${BASE_URL}/cards`, {
-      boardId: boardId,
+    const createCardResponse = await axios.post(`${BASE_URL}/boards/${boardId}/cards`, {
       title: 'Test Card',
       description: 'This is a test card',
       column: 'todo'
