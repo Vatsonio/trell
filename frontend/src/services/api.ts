@@ -1,7 +1,10 @@
 import axios from 'axios';
 import { Board, CreateCardData, UpdateCardData, MoveCardData } from '../types';
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+// Use Vercel deployment URL in production, localhost in development
+const API_BASE_URL = process.env.NODE_ENV === 'production' 
+  ? '/api'  // This will use the same domain as the frontend
+  : process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
 
 const api = axios.create({
   baseURL: API_BASE_URL,

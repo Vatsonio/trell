@@ -6,13 +6,62 @@
 
 **Production URL**: https://trell-6w8myhrwt-vatsonios-projects.vercel.app
 
-## 🌐 Deployment Information
+## 🌐 Vercel Deployment (FIXED & WORKING)
 
-- **Platform**: Vercel
-- **Frontend**: Static build deployed
-- **Backend API**: Serverless functions
-- **Database**: MongoDB Atlas
-- **Auto-deployment**: Connected to GitHub repo
+### ✅ Current Status
+- **Platform**: Vercel (Serverless)
+- **Frontend**: Static React build deployed correctly
+- **Backend API**: Serverless functions working
+- **Database**: MongoDB Atlas integration fixed
+- **CORS**: Properly configured for production
+- **API Routes**: All endpoints working correctly
+
+### 🚀 Deployment Instructions
+
+#### For New Deployments:
+
+1. **Prepare Your Repository**:
+   ```bash
+   git add .
+   git commit -m "Fix Vercel deployment configuration"
+   git push origin main
+   ```
+
+2. **Deploy to Vercel**:
+   - Go to [Vercel Dashboard](https://vercel.com/dashboard)
+   - Import your GitHub repository
+   - Vercel will automatically detect the configuration
+
+3. **Set Environment Variables in Vercel**:
+   - Go to Project Settings → Environment Variables
+   - Add: `MONGODB_URI` with your MongoDB connection string
+   - Example: `mongodb+srv://username:password@cluster.mongodb.net/taskboard?retryWrites=true&w=majority`
+
+4. **Deploy**:
+   - Vercel will automatically build and deploy
+   - Your app will be available at `https://your-project.vercel.app`
+
+#### For Existing Deployments:
+
+1. **Redeploy with Fixed Configuration**:
+   ```bash
+   # Push the fixed code
+   git push origin main
+   ```
+   
+2. **Manual Redeploy** (if needed):
+   - Go to Vercel Dashboard → Deployments
+   - Click "Redeploy" on the latest deployment
+
+### 🔧 What Was Fixed
+
+- ✅ **API Structure**: Simplified serverless function routing
+- ✅ **CORS Configuration**: Proper headers for production
+- ✅ **Frontend API Calls**: Configured for Vercel deployment
+- ✅ **Database Connection**: MongoDB Atlas integration fixed
+- ✅ **Build Process**: Optimized for Vercel static builds
+- ✅ **Environment Variables**: Proper handling in production
+- ✅ **Vercel Configuration**: Corrected vercel.json settings
 
 ![Screeen1](https://media.discordapp.net/attachments/1151832689620557876/1382116322317701244/image.png?ex=6849fba1&is=6848aa21&hm=dd258577cb3438763abe7c675ff70a04ab17d7962048f318f2484f7272c532f6&=&format=webp&quality=lossless&width=2381&height=1232)
 
